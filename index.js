@@ -1,7 +1,17 @@
+const HOSTS = [ // Jakie ip/hosty ma pingowac serwer
+//  [Nazwa urządzenia, ip/host, alive, time, min, max, avg] - ['', '', 0, 0, 0, 0, 0]
+    ['VirtualBox', '192.168.56.1', 0, 0, 0, 0, 0],
+    ['Hamachi', '25.40.221.99', 0, 0, 0, 0, 0],
+    ['Android', '192.168.1.44', 0, 0, 0, 0, 0],
+];
+
+const SITE_PORT = 80; // Port na jakim działa strona
+const SOCKET_PORT = 81; // Port na jakim działa socket.io
+const REPEAT_TIME = 1000; // Co ile powtarza się pingowanie (ms)
+
 const Express = require('express')
 const Ping = require('ping');
-const Io = require('socket.io')(81);
-
+const Io = require('socket.io')(SOCKET_PORT);
 const App = Express()
 
 App.use(Express.static(__dirname + '/css'));
@@ -9,30 +19,19 @@ App.use(Express.static(__dirname + '/html'));
 App.use(Express.static(__dirname + '/js'));
 App.use(Express.static(__dirname + '/node_modules'));
 
-const HOSTS = [ // Jakie ip/hosty ma pingowac serwer
-    ['VirtualBox', '192.168.56.1', 0, 0, 0, 0, 0],
-    ['Hamachi', '25.40.221.99', 0, 0, 0, 0, 0],
-    ['Android', '192.168.1.44', 0, 0, 0, 0, 0],
-];
-
-const PORT = 80; // Port na jakim działa strona
-const HTML_SITES_PATH = {
-    home: 'index.html'
-};
-
 App.get('/', (req, res) => {
-    res.sendFile(HTML_SITES_PATH.home);
+    res.sendFile('index.html');
 });
 
 Io.on('connection', socket => Io.emit('getHosts', HOSTS));
 App.get('/config', (req, res) => res.send('TEST'));
-App.listen(PORT, () => console.log(`App listening on port ${PORT}!`))
+App.listen(SITE_PORT, () => console.log(`App listening on port ${SITE_PORT}!`))
 
 
 setInterval(() => {
     pingHosts();
     Io.emit('getHosts', HOSTS);
-}, 1000);
+}, REPEAT_TIME);
 
 function pingHosts() {
     HOSTS.forEach((host, index) => {
