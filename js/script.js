@@ -18,7 +18,7 @@ Io.on('getHosts', value => {
             bg = "bg-danger";
         }
 
-        tmp.append('<li class="list-group-item ' + bg + '">' + host[0] + ' - time: ' + host[3] + ', min: ' + host[4] + ', max: ' + host[5] + ', avg: ' + host[6] +'<span class="float-right badge badge-primary badge-pill">' + host[1] + '</span></li>')
+        tmp.append('<li class="list-group-item ' + bg + '"> Time: ' + host[3] + ', min: ' + host[4] + ', max: ' + host[5] + ', avg: ' + host[6] +'<span class="float-right badge badge-light badge-pill">' + host[1] + ' - ' + host[0] + '</span></li>')
     });
 });
 
