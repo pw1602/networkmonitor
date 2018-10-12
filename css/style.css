@@ -4,3 +4,15 @@
     margin-top: 20px;
     width: 75%;
 }
+
+#all {
+    color: grey;
+}
+
+#active {
+    color: green;
+}
+
+#inactive {
+    color: red;
+}

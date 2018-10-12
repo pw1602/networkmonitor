@@ -13,14 +13,21 @@
     <body>
         <div class="main">
             <div class="card">
-                <div class="card-header text-center">
-                    Lista komputerów
+                <div class="card-header text-center bg-dark">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <a id="all" class="nav-link active" href="#">Wszystkie</a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="active" class="nav-link" href="#">Aktywne</a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="inactive" class="nav-link" href="#">Nieaktywne</a>
+                        </li>
+                    </ul>
                 </div>
 
                 <ul id="computers" class="list-group list-group-flush text-white">
-                    <!-- <li class="list-group-item bg-success">Komputer 1</li>
-                    <li class="list-group-item bg-danger">Komputer 2</li>
-                    <li class="list-group-item bg-dark">Komputer 3</li> -->
                 </ul>
             </div>
         </div>
