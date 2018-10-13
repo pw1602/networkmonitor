@@ -1,4 +1,3 @@
-const Io = io('http://localhost:81');
 let selectedBtn = null;
 
 Io.on('getHosts', value => {

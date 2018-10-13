@@ -5,9 +5,12 @@ const HOSTS = [ // Jakie ip/hosty ma pingowac serwer
     ['Android', '192.168.1.44', 0, 0, 0, 0, 0],
 ];
 
-const SITE_PORT = 80; // Port na jakim działa strona
-const SOCKET_PORT = 81; // Port na jakim działa socket.io
+const SITE_PORT = 3000; // Port na jakim działa strona
+const SOCKET_PORT = 3001; // Port na jakim działa socket.io
 const REPEAT_TIME = 1000; // Co ile powtarza się pingowanie (ms)
+const VIEWS = {
+    home: 'index.html'
+}
 
 const Express = require('express')
 const Ping = require('ping');
@@ -15,12 +18,13 @@ const Io = require('socket.io')(SOCKET_PORT);
 const App = Express()
 
 App.use(Express.static(__dirname + '/css'));
-App.use(Express.static(__dirname + '/html'));
 App.use(Express.static(__dirname + '/js'));
+App.use(Express.static(__dirname + '/fonts'));
+App.use(Express.static(__dirname + '/views'));
 App.use(Express.static(__dirname + '/node_modules'));
 
 App.get('/', (req, res) => {
-    res.sendFile('index.html');
+    res.sendFile(VIEWS.home);
 });
 
 Io.on('connection', socket => Io.emit('getHosts', HOSTS));
