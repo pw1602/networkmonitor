@@ -1,24 +1,18 @@
-let selectedBtn = null;
-
 Io.on('getHosts', value => {
     const tmp = $('#computers');
     tmp.empty();
 
-    value.forEach((host) => {
-        let bg = null;
-
-        if ((host[2] && selectedBtn == false) || (!host[2] && selectedBtn == true)) {
-            return;
-        }
-
-        if (host[2]) {
-            bg = "bg-success";
-        } else {
-            bg = "bg-danger";
-        }
-
-        tmp.append('<li class="list-group-item ' + bg + '"> Time: ' + host[3] + ', min: ' + host[4] + ', max: ' + host[5] + ', avg: ' + host[6] +'<span class="float-right badge badge-light badge-pill">' + host[1] + ' - ' + host[0] + '</span></li>')
+    value.forEach(host => {
+        tmp.append('<li id="' + host.name + '" class="list-group-item"> Time: ' + host.time + ', min: ' + host.min + ', max: ' + host.max + ', avg: ' + host.avg +'<span class="float-right badge badge-light badge-pill">' + host.ip + ' - ' + host.name + '</span></li>')
     });
+});
+
+Io.on('changeHost', value => {
+    const tmp = $('#' + value.name);
+    tmp.toggleClass('bg-success', value.alive);
+    tmp.toggleClass('bg-danger', !value.alive);
+    tmp.text('Time: ' + value.time + ', min: ' + value.min + ', max: ' + value.max + ', avg: ' + value.avg);
+    $('<span class="float-right badge badge-light badge-pill">' + value.ip + ' - ' + value.name + '</span>').appendTo(tmp);
 });
 
 const btnAll = $('#all');
@@ -26,8 +20,10 @@ const btnActive = $('#active');
 const btnInactive = $('#inactive');
 
 btnAll.click(() => {
-    selectedBtn = null;
-    
+    $('#computers > li').each((index, el) => {
+        el.removeAttribute('hidden');
+    });
+
     if (!btnAll.hasClass('active')) {
         btnAll.addClass('active');
     }
@@ -37,7 +33,9 @@ btnAll.click(() => {
 });
 
 btnActive.click(() => {
-    selectedBtn = true;
+    $('#computers > li').each((index, el) => {
+        el.toggleAttribute('hidden', jQuery.inArray('bg-success', el.classList) == -1);
+    });
 
     if (!btnActive.hasClass('active')) {
         btnActive.addClass('active');
@@ -48,7 +46,9 @@ btnActive.click(() => {
 });
 
 btnInactive.click(() => {
-    selectedBtn = false;
+    $('#computers > li').each((index, el) => {
+        el.toggleAttribute('hidden', jQuery.inArray('bg-danger', el.classList) == -1);
+    });
 
     if (!btnInactive.hasClass('active')) {
         btnInactive.addClass('active');

@@ -1,8 +1,16 @@
 const HOSTS = [ // Jakie ip/hosty ma pingowac serwer
-//  [Nazwa urządzenia, ip/host, alive, time, min, max, avg] - ['', '', 0, 0, 0, 0, 0]
-    ['VirtualBox', '192.168.56.1', 0, 0, 0, 0, 0],
-    ['Hamachi', '25.40.221.99', 0, 0, 0, 0, 0],
-    ['Android', '192.168.1.44', 0, 0, 0, 0, 0],
+    {
+        name: 'VirtualBox',
+        ip: '192.168.56.1'
+    },
+    {
+        name: 'Hamachi',
+        ip: '25.40.221.99'
+    },
+    {
+        name: 'Android',
+        ip: '192.168.1.44'
+    }
 ];
 
 const SITE_PORT = 3000; // Port na jakim działa strona
@@ -23,28 +31,26 @@ App.use(Express.static(__dirname + '/fonts'));
 App.use(Express.static(__dirname + '/views'));
 App.use(Express.static(__dirname + '/node_modules'));
 
-App.get('/', (req, res) => {
-    res.sendFile(VIEWS.home);
-});
+App.get('/', (req, res) => res.sendFile(VIEWS.home));
+//App.get('/config', (req, res) => res.send('TEST'));
 
-Io.on('connection', socket => Io.emit('getHosts', HOSTS));
-App.get('/config', (req, res) => res.send('TEST'));
 App.listen(SITE_PORT, () => console.log(`App listening on port ${SITE_PORT}!`))
 
+Io.on('connection', socket => Io.emit('getHosts', HOSTS));
 
 setInterval(() => {
     pingHosts();
-    Io.emit('getHosts', HOSTS);
 }, REPEAT_TIME);
 
 function pingHosts() {
-    HOSTS.forEach((host, index) => {
-        Ping.promise.probe(host[1]).then(res => {
-            HOSTS[index][2] = res.alive
-            HOSTS[index][3] = res.time
-            HOSTS[index][4] = res.min
-            HOSTS[index][5] = res.max
-            HOSTS[index][6] = res.avg
+    HOSTS.forEach(host => {
+        Ping.promise.probe(host.ip).then(res => {
+            host.time = res.time;
+            host.min = res.min;
+            host.max = res.max;
+            host.avg = res.avg;
+            host.alive = res.alive;
+            Io.emit('changeHost', host);
         });
     });
 }
