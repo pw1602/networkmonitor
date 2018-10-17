@@ -21,7 +21,10 @@ const Express = require('express')
 const Ping = require('ping');
 const Io = require('socket.io')(SOCKET_PORT);
 const App = Express()
+const ApiRoute = require('./js/api.js');
 
+App.use('/api', ApiRoute);
+App.use(Express.static(__dirname + '/public'));
 App.use(Express.static(__dirname + '/node_modules'));
 
 const VIEWS = {
