@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Monitor Sieciowy</title>
+
+        <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="animate.css/animate.min.css">
+        <link rel="stylesheet" href="../css/igrowl.min.css">
+        <link rel="stylesheet" href="../css/steadysets.css">
+        <link rel="stylesheet" href="../css/style.css" >
+    </head>
+
+    <body>
+        <div class="main">
+            <div class="shadow p-3 mb-5 bg-white rounded">
+                <h4>Dodawanie komputera</h4>
+                <form id="addComputer">
+                    <div class="form-row">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Nazwa">
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Ip/Host">
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-primary" type="submit">Wyślij</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="shadow p-3 mb-5 bg-white rounded">
+                <h4>Usuwanie komputera</h4>
+                <form id="removeComputer">
+                    <div class="form-row">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Ip/Host">
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-primary" type="submit">Wyślij</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="shadow p-3 mb-5 bg-white rounded">
+                <h4>Zmiana nazwy komputera</h4>
+                <form id="renameComputer">
+                    <div class="form-row">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Stara nazwa">
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Nowa nazwa">
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-primary" type="submit">Wyślij</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script src="./jquery/dist/jquery.slim.min.js"></script>
+        <script src="./popper.js/dist/umd/popper.min.js"></script>
+        <script src="./bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="./socket.io-client/dist/socket.io.js"></script>
+        <script src="../js/igrowl.min.js"></script>
+        <script src="./socket.io-client/dist/socket.io.js"></script>
+        <script>const Io = io('http://localhost:3001');</script>
+        <script src="../js/config.js"></script>
+        <script src="../js/socketError.js"></script>
+    </body>
+</html>

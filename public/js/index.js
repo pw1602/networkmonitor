@@ -2,8 +2,8 @@ Io.on('getHosts', value => {
     const tmp = $('#computers');
     tmp.empty();
 
-    value.forEach(host => {
-        tmp.append('<li id="' + host.name + '" class="list-group-item"> Time: ' + host.time + ', min: ' + host.min + ', max: ' + host.max + ', avg: ' + host.avg +'<span class="float-right badge badge-light badge-pill">' + host.ip + ' - ' + host.name + '</span></li>')
+    value.forEach(device => {
+        tmp.append('<li id="' + device.name + '" class="list-group-item"> Time: ' + device.time + ', min: ' + device.min + ', max: ' + device.max + ', avg: ' + device.avg +'<span class="float-right badge badge-light badge-pill">' + device.ip + ' - ' + device.name + '</span></li>')
     });
 });
 
