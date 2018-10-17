@@ -1,0 +1,11 @@
+{
+    "DBCONFIG": {
+        "host": "localhost",
+        "user": "root",
+        "password": "",
+        "database": "networkmonitor"
+    },
+    "SITE_PORT": 3000,
+    "SOCKET_PORT": 3001,
+    "REPEAT_TIME": 1000
+}

@@ -3,7 +3,7 @@ Io.on('getHosts', value => {
     tmp.empty();
 
     value.forEach(device => {
-        tmp.append('<li id="' + device.name + '" class="list-group-item"> Time: ' + device.time + ', min: ' + device.min + ', max: ' + device.max + ', avg: ' + device.avg +'<span class="float-right badge badge-light badge-pill">' + device.ip + ' - ' + device.name + '</span></li>')
+        tmp.append('<li id="' + device.name + '" class="list-group-item"> Time: ' + device.time + ', min: ' + device.min + ', max: ' + device.max + ', avg: ' + device.avg +'<span class="float-right badge badge-light badge-pill">' + device.host + ' - ' + device.name + '</span></li>')
     });
 });
 
@@ -12,7 +12,7 @@ Io.on('changeHost', value => {
     tmp.toggleClass('bg-success', value.alive);
     tmp.toggleClass('bg-danger', !value.alive);
     tmp.text('Time: ' + value.time + ', min: ' + value.min + ', max: ' + value.max + ', avg: ' + value.avg);
-    $('<span class="float-right badge badge-light badge-pill">' + value.ip + ' - ' + value.name + '</span>').appendTo(tmp);
+    $('<span class="float-right badge badge-light badge-pill">' + value.host + ' - ' + value.name + '</span>').appendTo(tmp);
 });
 
 const btnAll = $('#all');

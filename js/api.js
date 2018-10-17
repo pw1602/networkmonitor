@@ -1,12 +1,8 @@
+const {DBCONFIG} = require('../config.json');
 const Express = require('express');
 const Router = Express.Router();
 const Database = require('./db.js');
-const Db = new Database({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'networkmonitor'
-});
+const Db = new Database(DBCONFIG);
 
 /*Router.use((req, res, next) => {
     console.log('%s %s %s', req.method, req.url, req.path)

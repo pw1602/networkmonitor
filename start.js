@@ -1,22 +1,10 @@
-const DEVICES = [ // Jakie ip/hosty ma pingowac serwer
-    {
-        name: 'VirtualBox',
-        host: '192.168.56.1'
-    },
-    {
-        name: 'Hamachi',
-        host: '25.40.221.99'
-    },
-    {
-        name: 'Android',
-        host: '192.168.1.44'
-    }
-];
+const VIEWS = {
+    home: __dirname + '/public/views/index.html',
+    config:  __dirname + '/public/views/config.html'
+}
 
-const SITE_PORT = 3000; // Port na jakim działa strona
-const SOCKET_PORT = 3001; // Port na jakim działa socket.io
-const REPEAT_TIME = 1000; // Co ile powtarza się pingowanie (ms)
-
+const {DBCONFIG, SOCKET_PORT, SITE_PORT, REPEAT_TIME} = require('./config.json');
+const Db = new (require('./js/db.js'))(DBCONFIG);
 const Express = require('express')
 const Ping = require('ping');
 const Io = require('socket.io')(SOCKET_PORT);
@@ -27,17 +15,12 @@ App.use('/api', ApiRoute);
 App.use(Express.static(__dirname + '/public'));
 App.use(Express.static(__dirname + '/node_modules'));
 
-const VIEWS = {
-    home: __dirname + '/public/views/index.html',
-    config:  __dirname + '/public/views/config.html'
-}
-
 App.get('/', (req, res) => res.sendFile(VIEWS.home));
 App.get('/config', (req, res) => res.sendFile(VIEWS.config));
 
 App.listen(SITE_PORT, () => console.log(`App listening on port ${SITE_PORT}!`))
 
-Io.on('connection', socket => Io.emit('getHosts', DEVICES));
+Io.on('connection', socket => Db.getAllComputers().then(result => Io.emit('getHosts', result)));
 
 setInterval(() => {
     pingHosts();
