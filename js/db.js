@@ -1,14 +1,20 @@
-'use strict';
 const Mysql = require('mysql');
 
 class Database {
-    constructor(config) {
-        this.connection = Mysql.createConnection(config);
+    constructor() {
+        this.connection = Mysql.createPool({
+            connectionLimit: 10,
+            host: "localhost",
+            port: 3306,
+            user: "root",
+            password: "",
+            database: "networkmonitor"
+        });
     }
 
     getAllComputers() {
         return new Promise((resolve, reject) => {
-            this.connection.query("SELECT * FROM komputery;", (err, result) => {
+            this.connection.query("SELECT * FROM computers;", (err, result) => {
                 if (err) return reject(err);
                 resolve(result);
             });
@@ -17,7 +23,7 @@ class Database {
 
     getComputer(id) {
         return new Promise((resolve, reject) => {
-            this.connection.query("SELECT * FROM komputery WHERE id = ?;", [id], (err, result) => {
+            this.connection.query("SELECT * FROM computers WHERE id = ?;", [id], (err, result) => {
                 if (err) return reject(err);
                 resolve(result);
             });
