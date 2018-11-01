@@ -1,13 +1,11 @@
 'use strict';
 
-Io.on('getHosts', value => {
-    const tmp = $('#computers');
-    tmp.empty();
+$(() => {
+    showHosts();
+});
 
-    value.forEach(device => {
-        const replaced = device.name.split(' ').join("_");
-        tmp.append('<li id="' + replaced + '" class="list-group-item"> Time: ' + device.time + ', min: ' + device.min + ', max: ' + device.max + ', avg: ' + device.avg +'<span class="float-right badge badge-light badge-pill">' + device.host + ' - ' + device.name + '</span></li>')
-    });
+Io.on('getHosts', () => {
+    showHosts();
 });
 
 Io.on('changeHost', value => {
@@ -18,6 +16,23 @@ Io.on('changeHost', value => {
     tmp.text('Time: ' + value.time + ', min: ' + value.min + ', max: ' + value.max + ', avg: ' + value.avg);
     $('<span class="float-right badge badge-light badge-pill">' + value.host + ' - ' + value.name + '</span>').appendTo(tmp);
 });
+
+function showHosts() {
+    const tmp = $('#computers');
+    tmp.empty();
+
+    $.ajax({
+       url: 'http://localhost:3000/api/computers',
+       method: 'GET' 
+    })
+    .done(res => {
+        res.forEach(device => {
+            const replaced = device.name.split(' ').join("_");
+            tmp.append('<li id="' + replaced + '" class="list-group-item"> Time: ' + device.time + ', min: ' + device.min + ', max: ' + device.max + ', avg: ' + device.avg +'<span class="float-right badge badge-light badge-pill">' + device.host + ' - ' + device.name + '</span></li>')
+        });
+    })
+    .catch(err => console.log(err));
+}
 
 const btnAll = $('#all');
 const btnActive = $('#active');

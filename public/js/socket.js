@@ -1,7 +1,6 @@
 let showError = false;
 let connError = false;
 let recError = false;
-let reconnectAttempt = 0;
 
 Io.on('connect_error', error => {
     if (!connError) {
@@ -25,27 +24,23 @@ Io.on('disconnect', (reason) => {
 
 Io.on('reconnect', (attemptNumber) => {
     growlMsg('success', 'Ponowne połączenie z serwerem', 'Połączono z serwerem. (' + attemptNumber + ')', 'wifi');
-    reconnectAttempt = 0;
 });
 
 Io.on('reconnect_attempt', (attemptNumber) => {
-    if (attemptNumber <= 3) {
-        reconnectAttempt = attemptNumber;
-        growlMsg('warning', 'Ponowne połączenie z serwerem', 'Próba połączenia z serwerem... (' + reconnectAttempt + ' z 3)', 'warning');
+    if (attemptNumber == 1) {
+        growlMsg('warning', 'Ponowne połączenie z serwerem', 'Próba połączenia z serwerem...', 'warning');
     }
 });
 
 Io.on('reconnect_failed', () => {
     if (!recError) {
         growlMsg('danger', 'Ponowne połączenie z serwerem', 'Nie udało się połączyć z serwerem.', 'ban');
-        recError = true;
     }
 });
 
 Io.on('error', error => {
     if (!showError) {
         growlMsg('danger', 'Błąd', error, 'ban');
-        showError = true;
     }
 });
 
@@ -76,7 +71,7 @@ function growlMsg(type, title, msg, icon) {
         offset: 20,
         spacing: 10,
         z_index: 1031,
-        delay: 5000,
+        delay: 2000,
         timer: 1000,
         url_target: '_blank',
         mouse_over: null,

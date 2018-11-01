@@ -1,18 +1,20 @@
-const {DBCONFIG, SOCKET_PORT, SITE_PORT, REPEAT_TIME} = require('./config.json');
+const {SOCKET_PORT, SITE_PORT, REPEAT_TIME} = require('./config.json');
 
-const Db = new (require('./js/db.js'))(DBCONFIG);
+const Db = new (require('./js/db.js'));
 const Express = require('express')
 const Ping = require('ping');
 const SocketIo = require('socket.io')(SOCKET_PORT);
 const App = Express()
 const ApiRoute = require('./js/api.js');
-ApiRoute.io(SocketIo);
+ApiRoute.db(Db);
 
 const VIEWS = {
     home: __dirname + '/public/views/index.html',
     config:  __dirname + '/public/views/config.html'
 }
 
+
+App.enable('trust proxy');
 App.use(Express.static(__dirname + '/public'));
 App.use(Express.static(__dirname + '/node_modules'));
 
@@ -21,27 +23,30 @@ App.get('/config', (req, res) => res.sendFile(VIEWS.config));
 App.use('/api',  ApiRoute);
 
 let Devices = null;
+let pingIntervalVar = null;
 App.listen(SITE_PORT, () => {
     console.log(`App listening on port ${SITE_PORT}!`);
+    SocketIo.emit('getHosts', 'test');
     
     Db.getAllComputers()
     .then(result => {
         Devices = result;
-        setInterval(() => {
-            pingHosts();
-        }, REPEAT_TIME);
+        pingIntervalVar = setInterval(() => pingHosts(), REPEAT_TIME);
     })
-    .catch(err => console.log("App Start Database Error: " + err.code));
+    .catch(err => console.log("App start database error: " + err.code));
 });
 
 SocketIo.on('connection', socket => {
-    Db.getAllComputers()
-    .then(result => {
-        socket.emit('getHosts', result)
-    })
-    .catch(err => {
-        console.log("Socket Io Database Error: " + err.code);
-        socket.emit('growlMsg', 'danger', 'Problem z bazą danych', err.code, 'ban');
+    socket.on('getHosts', () => {
+        Db.getAllComputers()
+        .then(result => {
+            Devices = result;
+            SocketIo.emit('getHosts');
+        })
+        .catch(err => {
+            console.log("SocketIo database error: " + err.code);
+            clearInterval(pingIntervalVar);
+        });
     });
 });
 

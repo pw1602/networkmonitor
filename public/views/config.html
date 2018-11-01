@@ -18,10 +18,10 @@
                 <form id="addComputer">
                     <div class="form-row">
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Nazwa">
+                            <input name="name" type="text" class="form-control" placeholder="Nazwa" required>
                         </div>
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Ip/Host">
+                            <input name="host" type="text" class="form-control" placeholder="Ip/Host" required>
                         </div>
                         <div class="col">
                             <button class="btn btn-outline-primary" type="submit">Wyślij</button>
@@ -32,10 +32,10 @@
 
             <div class="shadow p-3 mb-5 bg-white rounded">
                 <h4>Usuwanie komputera</h4>
-                <form id="removeComputer">
+                <form id="deleteComputer">
                     <div class="form-row">
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Ip/Host">
+                            <input name="host" type="text" class="form-control" placeholder="Ip/Host" required>
                         </div>
                         <div class="col">
                             <button class="btn btn-outline-primary" type="submit">Wyślij</button>
@@ -49,10 +49,10 @@
                 <form id="renameComputer">
                     <div class="form-row">
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Stara nazwa">
+                            <input name="oldName" type="text" class="form-control" placeholder="Stara nazwa" required>
                         </div>
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Nowa nazwa">
+                            <input name="newName" type="text" class="form-control" placeholder="Nowa nazwa" required>
                         </div>
                         <div class="col">
                             <button class="btn btn-outline-primary" type="submit">Wyślij</button>
@@ -62,10 +62,10 @@
             </div>
         </div>
 
-        <script src="./jquery/dist/jquery.slim.min.js"></script>
+        <script src="./jquery/dist/jquery.js"></script>
         <script src="./popper.js/dist/umd/popper.min.js"></script>
         <script src="./bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="./socket.io-client/dist/socket.io.js"></script>
+        <script src="../js/bootstrap-notify.min.js"></script>
         <script src="./socket.io-client/dist/socket.io.js"></script>
         <script>const Io = io('http://localhost:3001');</script>
         <script src="../js/config.js"></script>
