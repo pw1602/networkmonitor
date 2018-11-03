@@ -1,16 +1,20 @@
 'use strict';
 
-$('#addComputer').submit(e => {
+const addComputer = $('#addComputer');
+const deleteComputer = $('#deleteComputer');
+const renameComputer = $('#renameComputer');
+
+addComputer.submit(e => {
     e.preventDefault();
 
-    const formData = toJSON($('#addComputer').serializeArray());
+    const formData = toJSON(addComputer.serializeArray());
     $.ajax({
         url: 'http://localhost:3000/api/computers/' + formData.name,
         type: 'GET',
     })
     .done(res => {
         if (res.length != 0) {
-            growlMsg('warning', 'Dodawanie komputera do bazy', 'Komputer o tej nazwie już istnieje!', 'plus');
+            growlMsg('warning', 'Dodawanie komputera', 'Komputer o tej nazwie już istnieje!', 'plus');
             return;
         }
 
@@ -20,7 +24,7 @@ $('#addComputer').submit(e => {
         })
         .done(res => {
             if (res.length != 0) {
-                growlMsg('warning', 'Dodawanie komputera do bazy', 'Komputer o tym ip/hoście już istnieje!', 'plus');
+                growlMsg('warning', 'Dodawanie komputera', 'Komputer o tym ip/hoście już istnieje!', 'plus');
                 return;
             }
     
@@ -32,10 +36,11 @@ $('#addComputer').submit(e => {
             })
             .done(res => {
                 if (res.affectedRows != 0) {
-                    growlMsg('success', 'Dodawanie komputera do bazy', 'Dodano komputer do bazy!', 'plus');
-                    Io.emit('getHosts');
+                    growlMsg('success', 'Dodawanie komputera', 'Dodano komputer!', 'plus');
+                    Io.emit('getHosts', 'add', formData);
+                    addComputer.find('input').val('');
                 } else {
-                    growlMsg('danger', 'Dodawanie komputera do bazy', 'Nie udało się dodać komputera do bazy!', 'plus');
+                    growlMsg('danger', 'Dodawanie komputera', 'Nie udało się dodać komputera!', 'plus');
                 }
             })
             .catch(err => console.log(err));
@@ -45,10 +50,10 @@ $('#addComputer').submit(e => {
     .catch(err => console.log(err));
 });
 
-$('#deleteComputer').submit(e => {
+deleteComputer.submit(e => {
     e.preventDefault();
 
-    const formData = toJSON($('#deleteComputer').serializeArray());
+    const formData = toJSON(deleteComputer.serializeArray());
     $.ajax({
         url: 'http://localhost:3000/api/computers/' + formData.host,
         type: 'DELETE',
@@ -57,32 +62,47 @@ $('#deleteComputer').submit(e => {
     })
     .done(res => {
         if (res.affectedRows != 0) {
-            growlMsg('success', 'Usuwanie komputera z bazy', 'Usunięto komputer z bazy!', 'minus');
-            Io.emit('getHosts');
+            growlMsg('success', 'Usuwanie komputera', 'Usunięto komputer!', 'minus');
+            Io.emit('getHosts', 'delete', formData);
+            deleteComputer.find('input').val('');
         } else {
-            growlMsg('warning', 'Usuwanie komputera z bazy', 'Nie ma takiego komputera w bazie!', 'minus');
+            growlMsg('warning', 'Usuwanie komputera', 'Nie ma takiego komputera!', 'minus');
         }
     })
     .catch(err => console.log(err));
 });
 
-$('#renameComputer').submit(e => {
+renameComputer.submit(e => {
     e.preventDefault();
 
-    const formData = toJSON($('#renameComputer').serializeArray());
+    const formData = toJSON(renameComputer.serializeArray());
+
     $.ajax({
-        url: 'http://localhost:3000/api/computers/' + formData.oldName,
-        type: 'PUT',
-        contentType: 'application/json',
-        data: JSON.stringify(formData)
+        url: 'http://localhost:3000/api/computers/' + formData.newName,
+        type: 'GET'
     })
     .done(res => {
-        if (res.affectedRows != 0) {
-            growlMsg('success', 'Zmiana nazwy komputera w bazie', 'Zmieniono nazwę komputera w bazie!', 'transfer');
-            Io.emit('getHosts');
-        } else {
-            growlMsg('warning', 'Zmiana nazwy komputera w bazie', 'Nie ma takiego komputera w bazie!', 'transfer');
+        if (res.length != 0) {
+            growlMsg('warning', 'Zmiana nazwy komputera', 'Już istnieje komputer o takiej nazwie!', 'transfer');
+            return;
         }
+        
+        $.ajax({
+            url: 'http://localhost:3000/api/computers/' + formData.oldName,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(formData)
+        })
+        .done(res => {
+            if (res.affectedRows != 0) {
+                growlMsg('success', 'Zmiana nazwy komputera', 'Zmieniono nazwę komputera!', 'transfer');
+                Io.emit('getHosts', 'change', formData);
+                renameComputer.find('input').val('');
+            } else {
+                growlMsg('warning', 'Zmiana nazwy komputera', 'Nie ma takiego komputera!', 'transfer');
+            }
+        })
+        .catch(err => console.log(err));
     })
     .catch(err => console.log(err));
 });

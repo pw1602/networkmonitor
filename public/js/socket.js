@@ -52,7 +52,7 @@ function growlMsg(type, title, msg, icon) {
     $.notify({
         // options
         icon: 'oi oi-' + icon,
-        title: '<b>' + title + '</b><br>',
+        title: '<b>&ensp;' + title + '</b><br>',
         message: msg,
         //url: 'https://github.com/mouse0270/bootstrap-notify',
         target: '_blank'

@@ -4,8 +4,26 @@ $(() => {
     showHosts();
 });
 
-Io.on('getHosts', () => {
-    showHosts();
+Io.on('getHosts', (type, value) => {
+    if (type == 'all') {
+        showHosts();
+    } else {
+        const computerName = value.name || value.oldName || '';
+        const replaced = computerName.split(' ').join("_");
+        const tmp = replaced != '' ? $('#' + replaced) : undefined;
+
+        if (type == 'add') {
+            $('#computers').append(`<li id="${replaced}" title="${value.host}" class="list-group-item">Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}<span class="float-right badge badge-light badge-pill">${value.host} - ${value.name}</span></li>`);
+        } else if (type == 'delete') {
+            $(`li[title="${value.host}"]`).remove();
+        } else if (type == 'change') {
+            tmp.attr('id', value.newName.split(' ').join("_"));
+            tmp.toggleClass('bg-success', value.alive);
+            tmp.toggleClass('bg-danger', !value.alive);
+            tmp.text(`Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}`);
+            $(`<span class="float-right badge badge-light badge-pill">${value.host} - ${value.name || value.newName}</span>`).appendTo(tmp);
+        }
+    }
 });
 
 Io.on('changeHost', value => {
@@ -13,8 +31,8 @@ Io.on('changeHost', value => {
     const tmp = $('#' + replaced);
     tmp.toggleClass('bg-success', value.alive);
     tmp.toggleClass('bg-danger', !value.alive);
-    tmp.text('Time: ' + value.time + ', min: ' + value.min + ', max: ' + value.max + ', avg: ' + value.avg);
-    $('<span class="float-right badge badge-light badge-pill">' + value.host + ' - ' + value.name + '</span>').appendTo(tmp);
+    tmp.text(`Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}`);
+    $(`<span class="float-right badge badge-light badge-pill">${value.host} - ${value.name}</span>`).appendTo(tmp);
 });
 
 function showHosts() {
@@ -28,7 +46,7 @@ function showHosts() {
     .done(res => {
         res.forEach(device => {
             const replaced = device.name.split(' ').join("_");
-            tmp.append('<li id="' + replaced + '" class="list-group-item"> Time: ' + device.time + ', min: ' + device.min + ', max: ' + device.max + ', avg: ' + device.avg +'<span class="float-right badge badge-light badge-pill">' + device.host + ' - ' + device.name + '</span></li>')
+            tmp.append(`<li id="${replaced}" title="${device.host}" class="list-group-item">Time: ${device.time}, min: ${device.min}, max: ${device.max}, avg: ${device.avg}<span class="float-right badge badge-light badge-pill">${device.host} - ${device.name}</span></li>`);
         });
     })
     .catch(err => console.log(err));

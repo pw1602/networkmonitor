@@ -26,7 +26,6 @@ let Devices = null;
 let pingIntervalVar = null;
 App.listen(SITE_PORT, () => {
     console.log(`App listening on port ${SITE_PORT}!`);
-    SocketIo.emit('getHosts', 'test');
     
     Db.getAllComputers()
     .then(result => {
@@ -37,11 +36,13 @@ App.listen(SITE_PORT, () => {
 });
 
 SocketIo.on('connection', socket => {
-    socket.on('getHosts', () => {
+    socket.on('getHosts', (type, value) => {
+        clearInterval(pingIntervalVar);
         Db.getAllComputers()
         .then(result => {
             Devices = result;
-            SocketIo.emit('getHosts');
+            SocketIo.emit('getHosts', type, value);
+            pingIntervalVar = setInterval(() => pingHosts(), REPEAT_TIME);
         })
         .catch(err => {
             console.log("SocketIo database error: " + err.code);
