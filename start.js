@@ -22,12 +22,12 @@ App.get('/', (req, res) => res.sendFile(VIEWS.home));
 App.get('/config', (req, res) => res.sendFile(VIEWS.config));
 App.use('/api',  ApiRoute);
 
-let Devices = null;
-let pingIntervalVar = null;
+let Devices = [];
+let pingIntervalVar = undefined;
 App.listen(SITE_PORT, () => {
     console.log(`App listening on port ${SITE_PORT}!`);
     
-    Db.getAllComputers()
+    Db.getComputersToPing()
     .then(result => {
         Devices = result;
         pingIntervalVar = setInterval(() => pingHosts(), REPEAT_TIME);
@@ -37,17 +37,22 @@ App.listen(SITE_PORT, () => {
 
 SocketIo.on('connection', socket => {
     socket.on('getHosts', (type, value) => {
-        clearInterval(pingIntervalVar);
-        Db.getAllComputers()
-        .then(result => {
-            Devices = result;
-            SocketIo.emit('getHosts', type, value);
-            pingIntervalVar = setInterval(() => pingHosts(), REPEAT_TIME);
-        })
-        .catch(err => {
-            console.log("SocketIo database error: " + err.code);
-            clearInterval(pingIntervalVar);
-        });
+        if (type == 'add') {
+            Devices.push(value);
+        } else if (type == 'delete') {
+            const tmp = Devices.findIndex(el => el.host == value.host);
+
+            if(tmp != -1) {
+                Devices.splice(tmp, 1);
+            }
+        } else if (type == 'change') {
+            const tmp = Devices.findIndex(el => el.name == value.oldName);
+
+            if (tmp != -1) {
+                Devices[tmp].name = value.newName;
+            }
+        }
+        SocketIo.emit('getHosts', type, value);
     });
 });
 

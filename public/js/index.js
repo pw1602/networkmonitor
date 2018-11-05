@@ -8,31 +8,19 @@ Io.on('getHosts', (type, value) => {
     if (type == 'all') {
         showHosts();
     } else {
-        const computerName = value.name || value.oldName || '';
-        const replaced = computerName.split(' ').join("_");
-        const tmp = replaced != '' ? $('#' + replaced) : undefined;
-
         if (type == 'add') {
-            $('#computers').append(`<li id="${replaced}" title="${value.host}" class="list-group-item">Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}<span class="float-right badge badge-light badge-pill">${value.host} - ${value.name}</span></li>`);
+            $('#computers').append(getListElement(replaced, value));
         } else if (type == 'delete') {
             $(`li[title="${value.host}"]`).remove();
         } else if (type == 'change') {
-            tmp.attr('id', value.newName.split(' ').join("_"));
-            tmp.toggleClass('bg-success', value.alive);
-            tmp.toggleClass('bg-danger', !value.alive);
-            tmp.text(`Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}`);
-            $(`<span class="float-right badge badge-light badge-pill">${value.host} - ${value.name || value.newName}</span>`).appendTo(tmp);
+            value.name = value.oldName;
+            changeListElement(value, true);
         }
     }
 });
 
 Io.on('changeHost', value => {
-    const replaced = value.name.split(' ').join("_");
-    const tmp = $('#' + replaced);
-    tmp.toggleClass('bg-success', value.alive);
-    tmp.toggleClass('bg-danger', !value.alive);
-    tmp.text(`Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}`);
-    $(`<span class="float-right badge badge-light badge-pill">${value.host} - ${value.name}</span>`).appendTo(tmp);
+    changeListElement(value);
 });
 
 function showHosts() {
@@ -46,10 +34,36 @@ function showHosts() {
     .done(res => {
         res.forEach(device => {
             const replaced = device.name.split(' ').join("_");
-            tmp.append(`<li id="${replaced}" title="${device.host}" class="list-group-item">Time: ${device.time}, min: ${device.min}, max: ${device.max}, avg: ${device.avg}<span class="float-right badge badge-light badge-pill">${device.host} - ${device.name}</span></li>`);
+            tmp.append(getListElement(replaced, device));
         });
     })
     .catch(err => console.log(err));
+}
+
+function getBadge(value) {
+    return `<span class="float-right badge badge-light badge-pill">${value.host} - ${value.name}</span>`;
+}
+
+function getText(value) {
+    return `Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}`;
+}
+
+function getListElement(replaced, value) {
+    return `<li id="${replaced}" title="${value.host}" class="list-group-item">Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}<span class="float-right badge badge-light badge-pill">${value.host} - ${value.name}</span></li>`;
+}
+
+function changeListElement(value, changeId = false) {
+    const replaced = value.name.split(' ').join("_");
+    const tmp = $('#' + replaced);
+
+    if (changeId) {
+        tmp.attr('id', value.newName.split(' ').join("_"));
+    }
+
+    tmp.toggleClass('bg-success', value.alive);
+    tmp.toggleClass('bg-danger', !value.alive);
+    tmp.text(getText(value));
+    $(getBadge(value)).appendTo(tmp);
 }
 
 const btnAll = $('#all');

@@ -12,6 +12,15 @@ class Database {
         });
     }
 
+    getComputersToPing() {
+        return new Promise((resolve, reject) => {
+            this.connection.query("SELECT name, host FROM computers;", (err, result) => {
+                if (err) return reject(err);
+                resolve(result);
+            });
+        });
+    }
+
     getAllComputers() {
         return new Promise((resolve, reject) => {
             this.connection.query("SELECT * FROM computers;", (err, result) => {
