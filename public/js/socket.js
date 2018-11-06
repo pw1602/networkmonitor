@@ -48,7 +48,7 @@ Io.on('growlMsg', (type, title, msg, icon) => {
     growlMsg(type, title, msg, icon);
 });
 
-function growlMsg(type, title, msg, icon) {
+function growlMsg(type, title, msg, icon, delay = 2000) {
     $.notify({
         // options
         icon: 'oi oi-' + icon,
@@ -71,7 +71,7 @@ function growlMsg(type, title, msg, icon) {
         offset: 20,
         spacing: 10,
         z_index: 1031,
-        delay: 2000,
+        delay: delay,
         timer: 1000,
         url_target: '_blank',
         mouse_over: null,

@@ -9,9 +9,13 @@ Io.on('getHosts', (type, value) => {
         showHosts();
     } else {
         if (type == 'add') {
+            const replaced = value.name.split(' ').join("_");
             $('#computers').append(getListElement(replaced, value));
         } else if (type == 'delete') {
-            $(`li[title="${value.host}"]`).remove();
+            const listEl = $(`li[title="${value.host}"]`);
+            const divEl = $(`div[title="${value.host}"]`);
+            listEl.remove();
+            divEl.remove();
         } else if (type == 'change') {
             value.name = value.oldName;
             changeListElement(value, true);
@@ -19,7 +23,7 @@ Io.on('getHosts', (type, value) => {
     }
 });
 
-Io.on('changeHost', value => {
+Io.on('changeHost', value => {  
     changeListElement(value);
 });
 
@@ -41,29 +45,33 @@ function showHosts() {
 }
 
 function getBadge(value) {
-    return `<span class="float-right badge badge-light badge-pill">${value.host} - ${value.name}</span>`;
+    return `<span class="float-right badge badge-light badge-pill">${value.name}</span>`;
 }
 
-function getText(value) {
-    return `Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}`;
+function getCollapse(replaced, value) {
+    return `<div id="${replaced + '_Collapse'}" title="${value.host}" class="collapse bg-light text-dark"><span id="collapseSpan">Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}</span></div>`;
 }
 
 function getListElement(replaced, value) {
-    return `<li id="${replaced}" title="${value.host}" class="list-group-item">Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}<span class="float-right badge badge-light badge-pill">${value.host} - ${value.name}</span></li>`;
+    return `<li id="${replaced}" title="${value.host}" class="list-group-item" data-toggle="collapse" data-target="#${replaced + '_Collapse'}" aria-expanded="false" aria-controls="${replaced + '_Collapse'}">${value.host} ${getBadge(value)}</li>` + getCollapse(replaced, value);
 }
 
 function changeListElement(value, changeId = false) {
     const replaced = value.name.split(' ').join("_");
-    const tmp = $('#' + replaced);
+    const element = $('#' + replaced);
+    const collapse = $('#' + replaced + '_Collapse');
 
     if (changeId) {
-        tmp.attr('id', value.newName.split(' ').join("_"));
+        const name = value.newName.split(' ').join("_");
+        element.attr('id', name);
+        collapse.attr('id', name + '_Collapse');
     }
 
-    tmp.toggleClass('bg-success', value.alive);
-    tmp.toggleClass('bg-danger', !value.alive);
-    tmp.text(getText(value));
-    $(getBadge(value)).appendTo(tmp);
+    element.toggleClass('bg-success', value.alive);
+    element.toggleClass('bg-danger', !value.alive);
+    element.text(value.host);
+    $(getBadge(value)).appendTo(element);
+    collapse.text(`Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}`);
 }
 
 const btnAll = $('#all');
