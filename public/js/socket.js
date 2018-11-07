@@ -1,11 +1,14 @@
-let showError = false;
-let connError = false;
-let recError = false;
+let GROWL_MESSAGES = [
+    {name: 'showError', show: false},
+    {name: 'connError', show: false},
+    {name: 'recError', show: false}
+];
 
 Io.on('connect_error', error => {
-    if (!connError) {
+    let connError = GROWL_MESSAGES.find(el => el.name == 'showError');
+    if (!connError.show) {
         growlMsg('danger', 'Utracono połączenie', error, 'ban');
-        connError = true;
+        connError.show = true;
     }
 });
 
@@ -33,14 +36,18 @@ Io.on('reconnect_attempt', (attemptNumber) => {
 });
 
 Io.on('reconnect_failed', () => {
-    if (!recError) {
+    let recError = GROWL_MESSAGES.find(el => el.name == 'showError');
+    if (!recError.show) {
         growlMsg('danger', 'Ponowne połączenie z serwerem', 'Nie udało się połączyć z serwerem.', 'ban');
+        recError.show = true;
     }
 });
 
 Io.on('error', error => {
-    if (!showError) {
+    let showError = GROWL_MESSAGES.find(el => el.name == 'showError');
+    if (!showError.show) {
         growlMsg('danger', 'Błąd', error, 'ban');
+        showError.show = true;
     }
 });
 
@@ -48,7 +55,7 @@ Io.on('growlMsg', (type, title, msg, icon) => {
     growlMsg(type, title, msg, icon);
 });
 
-function growlMsg(type, title, msg, icon, delay = 2000) {
+function growlMsg(type, title, msg, icon) {
     $.notify({
         // options
         icon: 'oi oi-' + icon,
@@ -65,13 +72,13 @@ function growlMsg(type, title, msg, icon, delay = 2000) {
         newest_on_top: false,
         showProgressbar: false,
         placement: {
-            from: "top",
+            from: "bottom",
             align: "right"
         },
         offset: 20,
         spacing: 10,
         z_index: 1031,
-        delay: delay,
+        delay: 2000,
         timer: 1000,
         url_target: '_blank',
         mouse_over: null,

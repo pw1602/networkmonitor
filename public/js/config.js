@@ -37,6 +37,7 @@ addComputer.submit(e => {
             .done(res => {
                 if (res.affectedRows != 0) {
                     growlMsg('success', 'Dodawanie komputera', 'Dodano komputer!', 'plus');
+                    formData.id = res.insertId;
                     Io.emit('getHosts', 'add', formData);
                     addComputer.find('input').val('');
                 } else {

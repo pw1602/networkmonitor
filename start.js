@@ -27,12 +27,12 @@ let pingIntervalVar = undefined;
 App.listen(SITE_PORT, () => {
     console.log(`App listening on port ${SITE_PORT}!`);
     
-    Db.getComputersToPing()
+    Db.getAllComputers()
     .then(result => {
         Devices = result;
-        pingIntervalVar = setInterval(() => pingHosts(), REPEAT_TIME);
+        pingIntervalVar = setInterval(pingHosts, REPEAT_TIME);
     })
-    .catch(err => console.log("App start database error: " + err.code));
+    .catch(err => console.log(`App start database error: ${err.code}`));
 });
 
 SocketIo.on('connection', socket => {
@@ -60,13 +60,25 @@ function pingHosts() {
     Devices.forEach(device => {
         Ping.promise.probe(device.host)
         .then(res => {
+            if (device.tries == undefined) {
+                device.tries = 0
+            }
+
+            if (res.alive != device.alive) {
+                device.tries = 0;
+            }
+
+            device.tries += 1;
             device.time = res.time;
             device.min = res.min;
             device.max = res.max;
             device.avg = res.avg;
             device.alive = res.alive;
             SocketIo.emit('changeHost', device);
-            //Db.addPingLog(device.id, device.alive, device.time, device.min, device.max, device.avg).catch(err => console.log(err));
+            
+            /*if (device.tries >= 10) {
+                Db.addPingLog(device.id, device.alive, device.time, device.min, device.max, device.avg).catch(err => console.log(err));
+            }*/
         })
         .catch(err => console.log(err));
     });

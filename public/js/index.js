@@ -1,16 +1,12 @@
 'use strict';
 
-$(() => {
-    showHosts();
-});
-
+// Socket Io
 Io.on('getHosts', (type, value) => {
     if (type == 'all') {
         showHosts();
     } else {
         if (type == 'add') {
-            const replaced = value.name.split(' ').join("_");
-            $('#computers').append(getListElement(replaced, value));
+            $('#computers').append(getListElement(value));
         } else if (type == 'delete') {
             const listEl = $(`li[title="${value.host}"]`);
             const divEl = $(`div[title="${value.host}"]`);
@@ -18,13 +14,19 @@ Io.on('getHosts', (type, value) => {
             divEl.remove();
         } else if (type == 'change') {
             value.name = value.oldName;
-            changeListElement(value, true);
+            changeListElement(value);
         }
     }
 });
 
 Io.on('changeHost', value => {  
     changeListElement(value);
+});
+
+// Normal Functions
+$(() => {
+    showHosts();
+    setInterval(showConnection, 1000);
 });
 
 function showHosts() {
@@ -37,41 +39,47 @@ function showHosts() {
     })
     .done(res => {
         res.forEach(device => {
-            const replaced = device.name.split(' ').join("_");
-            tmp.append(getListElement(replaced, device));
+            tmp.append(getListElement(device));
         });
     })
     .catch(err => console.log(err));
 }
 
+function getListElement(value) {
+    return `<li id="${value.id}" title="${value.host}" class="list-group-item" data-toggle="collapse" data-target="#${'Collapse_' + value.id}" aria-expanded="false" aria-controls="${'Collapse_' + value.id}">${value.host} ${getBadge(value)}</li>` + getCollapse(value);
+}
+
 function getBadge(value) {
-    return `<span class="float-right badge badge-light badge-pill">${value.name}</span>`;
+    return `<span class="float-right badge badge-light">${value.name}</span>`;
 }
 
-function getCollapse(replaced, value) {
-    return `<div id="${replaced + '_Collapse'}" title="${value.host}" class="collapse bg-light text-dark"><span id="collapseSpan">Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}</span></div>`;
+function getCollapse(value) {
+    //`<span>Historia (średni czas) - Time: ${avg.time}, min: ${avg.min}, max: ${avg.max}, avg: ${avg.avg}</span>`
+    return `<div id="${'Collapse_' + value.id}" title="${value.host}" class="collapse bg-light text-dark"><span>${getCollapseText(value)}</span></div>`;
 }
 
-function getListElement(replaced, value) {
-    return `<li id="${replaced}" title="${value.host}" class="list-group-item" data-toggle="collapse" data-target="#${replaced + '_Collapse'}" aria-expanded="false" aria-controls="${replaced + '_Collapse'}">${value.host} ${getBadge(value)}</li>` + getCollapse(replaced, value);
+function getCollapseText(value) {
+    return `Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}`;
 }
 
-function changeListElement(value, changeId = false) {
-    const replaced = value.name.split(' ').join("_");
-    const element = $('#' + replaced);
-    const collapse = $('#' + replaced + '_Collapse');
-
-    if (changeId) {
-        const name = value.newName.split(' ').join("_");
-        element.attr('id', name);
-        collapse.attr('id', name + '_Collapse');
-    }
+function changeListElement(value) {
+    const element = $('#' + value.id);
+    const collapse = $('#' + 'Collapse_' + value.id);
 
     element.toggleClass('bg-success', value.alive);
     element.toggleClass('bg-danger', !value.alive);
     element.text(value.host);
     $(getBadge(value)).appendTo(element);
-    collapse.text(`Time: ${value.time}, min: ${value.min}, max: ${value.max}, avg: ${value.avg}`);
+    collapse.children('span').text(getCollapseText(value));
+}
+
+function showConnection() {
+    const tmp = $('#dbConnection');
+    const connection = Io.connected;
+
+    tmp.toggleClass('badge-success', connection);
+    tmp.toggleClass('badge-danger', !connection);
+    tmp.text(connection ? 'Połączono z serwerem' : 'Brak połączenia z serwerem');
 }
 
 const btnAll = $('#all');
