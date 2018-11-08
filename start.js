@@ -76,9 +76,9 @@ function pingHosts() {
             device.alive = res.alive;
             SocketIo.emit('changeHost', device);
             
-            /*if (device.tries >= 10) {
+            if (device.tries >= 10) {
                 Db.addPingLog(device.id, device.alive, device.time, device.min, device.max, device.avg).catch(err => console.log(err));
-            }*/
+            }
         })
         .catch(err => console.log(err));
     });

@@ -16,18 +16,24 @@ Router.get('/computers', (req, res, next) => {
     .catch(err => console.log("computers GET error: " + err.code));
 });
 
+Router.get('/computers/:var', (req, res, next) => {
+    Db.getComputer(req.params.var)
+    .then(result => res.json(result))
+    .catch(err => console.log("computers/:var GET error: " + err.code));
+});
+
+Router.get('/logs', (req, res, next) => {
+    Db.getAvgPingLogs()
+    .then(result => res.send(result))
+    .catch(err => console.log("logs GET error: " + err.code));
+});
+
 Router.post('/computers', jsonParser, (req, res) => {
     if (!req.body) return res.sendStatus(400);
 
     Db.addComputer(req.body.name, req.body.host)
     .then(result => res.send(result))
     .catch(err => console.log("computers POST error: " + err.code));
-});
-
-Router.get('/computers/:var', (req, res, next) => {
-    Db.getComputer(req.params.var)
-    .then(result => res.json(result))
-    .catch(err => console.log("computers/:var GET error: " + err.code));
 });
 
 Router.delete('/computers/:host', jsonParser, (req, res, next) => {

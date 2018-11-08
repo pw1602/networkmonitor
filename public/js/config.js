@@ -1,5 +1,8 @@
 'use strict';
 
+const GET_COMPUTERS_API_URL = 'http://localhost:3000/api/computers';
+const GET_COMPUTER_API_URL = 'http://localhost:3000/api/computers/';
+
 const addComputer = $('#addComputer');
 const deleteComputer = $('#deleteComputer');
 const renameComputer = $('#renameComputer');
@@ -9,7 +12,7 @@ addComputer.submit(e => {
 
     const formData = toJSON(addComputer.serializeArray());
     $.ajax({
-        url: 'http://localhost:3000/api/computers/' + formData.name,
+        url: GET_COMPUTER_API_URL + formData.name,
         type: 'GET',
     })
     .done(res => {
@@ -19,7 +22,7 @@ addComputer.submit(e => {
         }
 
         $.ajax({
-            url: 'http://localhost:3000/api/computers/' + formData.host,
+            url: GET_COMPUTER_API_URL + formData.host,
             type: 'GET',
         })
         .done(res => {
@@ -29,7 +32,7 @@ addComputer.submit(e => {
             }
     
             $.ajax({
-                url: 'http://localhost:3000/api/computers',
+                url: GET_COMPUTERS_API_URL,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(formData)
@@ -56,7 +59,7 @@ deleteComputer.submit(e => {
 
     const formData = toJSON(deleteComputer.serializeArray());
     $.ajax({
-        url: 'http://localhost:3000/api/computers/' + formData.host,
+        url: GET_COMPUTER_API_URL + formData.host,
         type: 'DELETE',
         contentType: 'application/json',
         data: JSON.stringify(formData)
@@ -79,7 +82,7 @@ renameComputer.submit(e => {
     const formData = toJSON(renameComputer.serializeArray());
 
     $.ajax({
-        url: 'http://localhost:3000/api/computers/' + formData.newName,
+        url: GET_COMPUTER_API_URL + formData.newName,
         type: 'GET'
     })
     .done(res => {
@@ -89,7 +92,7 @@ renameComputer.submit(e => {
         }
         
         $.ajax({
-            url: 'http://localhost:3000/api/computers/' + formData.oldName,
+            url: GET_COMPUTER_API_URL + formData.oldName,
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(formData)
