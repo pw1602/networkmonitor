@@ -1,10 +1,10 @@
 const {SOCKET_PORT, SITE_PORT, REPEAT_TIME} = require('./config.json');
 
 const Db = new (require('./js/db.js'));
-const Express = require('express')
+const Express = require('express');
 const Ping = require('ping');
 const SocketIo = require('socket.io')(SOCKET_PORT);
-const App = Express()
+const App = Express();
 const ApiRoute = require('./js/api.js');
 ApiRoute.db(Db);
 
@@ -12,7 +12,6 @@ const VIEWS = {
     home: __dirname + '/public/views/index.html',
     config:  __dirname + '/public/views/config.html'
 }
-
 
 App.enable('trust proxy');
 App.use(Express.static(__dirname + '/public'));

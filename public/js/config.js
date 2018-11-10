@@ -1,7 +1,7 @@
 'use strict';
 
-const GET_COMPUTERS_API_URL = 'http://localhost:3000/api/computers';
-const GET_COMPUTER_API_URL = 'http://localhost:3000/api/computers/';
+const GET_COMPUTERS_API_URL = `http://${window.location.host}/api/computers`;
+const GET_COMPUTER_API_URL = `http://${window.location.host}/api/computers/`;
 
 const addComputer = $('#addComputer');
 const deleteComputer = $('#deleteComputer');

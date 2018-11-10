@@ -1,7 +1,7 @@
 'use strict';
 
-const GET_COMPUTERS_API_URL = 'http://localhost:3000/api/computers';
-const GET_LOGS_API_URL = 'http://localhost:3000/api/logs';
+const GET_COMPUTERS_API_URL = `http://${window.location.host}/api/computers`;
+const GET_LOGS_API_URL = `http://${window.location.host}/api/logs`;
 const COLLAPSE_DIV_PREFIX = 'Collapse_';
 
 // Socket Io
@@ -57,7 +57,6 @@ function showLogs() {
         method: 'GET'
     })
     .done(res => {
-        console.log(res);
         res.forEach(log => {
             $('#' + COLLAPSE_DIV_PREFIX + log.id).children('#logs').text(`Logi (${log.count}) - Time: ${log.time}, min: ${log.min}, max: ${log.max}, avg: ${log.avg}`);
         });

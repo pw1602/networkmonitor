@@ -67,7 +67,7 @@
         <script src="./bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="../js/bootstrap-notify.min.js"></script>
         <script src="./socket.io-client/dist/socket.io.js"></script>
-        <script>const Io = io('http://localhost:3001');</script>
+        <script>const Io = io(`http://${window.location.hostname}:3001`);</script>
         <script src="../js/config.js"></script>
         <script src="../js/socket.js"></script>
     </body>
