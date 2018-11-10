@@ -1,11 +1,13 @@
-const {SOCKET_PORT, SITE_PORT, REPEAT_TIME} = require('./config.json');
+const {SITE_PORT, REPEAT_TIME} = require('./config.json');
 
 const Db = new (require('./js/db.js'));
 const Express = require('express');
-const Ping = require('ping');
-const SocketIo = require('socket.io')(SOCKET_PORT);
 const App = Express();
+const Http = require('http').Server(App);
+const SocketIo = require('socket.io')(Http);
 const ApiRoute = require('./js/api.js');
+const Ping = require('ping');
+
 ApiRoute.db(Db);
 
 const VIEWS = {
@@ -23,7 +25,7 @@ App.use('/api',  ApiRoute);
 
 let Devices = [];
 let pingIntervalVar = undefined;
-App.listen(SITE_PORT, () => {
+Http.listen(SITE_PORT, () => {
     console.log(`App listening on port ${SITE_PORT}!`);
     
     Db.getAllComputers()
