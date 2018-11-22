@@ -48,9 +48,9 @@ class Database {
         });
     }
 
-    addPingLog(computer_id, alive, time, min, max, avg) {
+    addPingLog(computer_id, host, alive, time, min, max, avg) {
         return new Promise((resolve, reject) => {
-            this.connection.query("INSERT INTO logs (computer_id, alive, time, min, max, avg) VALUES (?, ?, ?, ?, ?, ?);", [computer_id, alive, time, min, max, avg], (err, result) => {
+            this.connection.query("INSERT INTO logs (computer_id, computer_host, alive, time, min, max, avg) VALUES (?, ?, ?, ?, ?, ?, ?);", [computer_id, host, alive, time, min, max, avg], (err, result) => {
                 if (err) return reject(err);
                 resolve(result);
             });

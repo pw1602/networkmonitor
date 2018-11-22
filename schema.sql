@@ -60,6 +60,7 @@ CREATE TABLE `computers` (
 CREATE TABLE `logs` (
   `id` int(11) NOT NULL,
   `computer_id` int(11) NOT NULL,
+  `computer_host` varchar(25) NOT NULL,
   `alive` int(11) NOT NULL,
   `time` int(11) NOT NULL,
   `min` int(11) NOT NULL,
